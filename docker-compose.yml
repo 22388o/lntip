@@ -1,0 +1,15 @@
+version: "3.1"
+services:
+  db:
+    image: mariadb
+    volumes:
+      - ./data:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PASSWORD=root
+    ports:
+      - "3306:3306"
+    networks:
+      - db
+
+networks:
+  db:

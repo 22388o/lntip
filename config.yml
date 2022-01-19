@@ -1,0 +1,18 @@
+bot:
+  token: OTMyMjUyODIwNzY4NDQ4NTUy.YeQSGA.PnfevSxac1qv7WuhGbSNohhn1w4
+
+database:
+  name: lntip
+  host: localhost
+  port: 3306
+  user: root
+  password: root
+
+lnd:
+  host: 127.0.0.1:10001
+  tls_path: /home/aureleoules/.polar/networks/1/volumes/lnd/alice/tls.cert
+  macaroon_path: /home/aureleoules/.polar/networks/1/volumes/lnd/alice/data/chain/bitcoin/regtest
+  network: regtest
+
+
+  
