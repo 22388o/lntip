@@ -1,0 +1,16 @@
+bot:
+  token: bot.token
+
+database:
+  name: lntip
+  host: localhost
+  port: 3306
+  user: root
+  password: root
+
+lnd:
+  host: 127.0.0.1:10001
+  tls_path: /lnd/alice/tls.cert
+  macaroon_path: /lnd/alice/data/chain/bitcoin/regtest
+  network: regtest
+
