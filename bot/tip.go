@@ -178,8 +178,6 @@ func lntipHandler(s *discordgo.Session, m *discordgo.MessageCreate, args []strin
 		Amount:    int64(tipAmount),
 	}
 
-	zap.S().Infow("User %s tipped", "user", m.Author.Username, m.Author.ID, "message", m.Message.ID, "amount", tipAmount)
-
 	sendTip(s, &tip, m.ChannelID, m.Author.Username)
 }
 
@@ -237,6 +235,12 @@ func sendTip(s *discordgo.Session, tip *models.Tip, channelID string, fromUserna
 
 		Description: fmt.Sprintf("You've just received a tip!"),
 		Color:       0xFFFF00,
+	})
+
+	discord.ChannelMessageSendEmbed(channelID, &discordgo.MessageEmbed{
+		Title:  "Successfully tipped",
+		Fields: fields,
+		Color:  0x00FF00,
 	})
 
 	zap.S().Info("Tip success")
