@@ -8,6 +8,7 @@ import (
 
 	"github.com/aureleoules/lntip/lnclient"
 	"github.com/bwmarrin/discordgo"
+	"github.com/dustin/go-humanize"
 	"github.com/lightningnetwork/lnd/lnrpc"
 	"github.com/yeqown/go-qrcode/v2"
 	"github.com/yeqown/go-qrcode/writer/standard"
@@ -67,5 +68,37 @@ func depositHandler(s *discordgo.Session, m *discordgo.MessageCreate, args []str
 		return
 	}
 
-	s.ChannelFileSendWithMessage(m.ChannelID, "Deposit: "+invoice.PaymentRequest, "qrcode.png", b)
+	_, err = s.ChannelMessageSendComplex(m.ChannelID, &discordgo.MessageSend{
+		Embed: &discordgo.MessageEmbed{
+			Title: "Deposit",
+			Fields: []*discordgo.MessageEmbedField{
+				{
+					Name:  "Amount",
+					Value: fmt.Sprintf("%s sats", humanize.Comma(int64(amount))),
+				},
+				{
+					Name:  "Invoice",
+					Value: invoice.PaymentRequest,
+				},
+			},
+			Description: "Scan this QR code with your mobile wallet to deposit funds.",
+			Color:       0xFFFF00,
+			Type:        "rich",
+			Image: &discordgo.MessageEmbedImage{
+				URL: "attachment://qrcode.png",
+			},
+		},
+		Files: []*discordgo.File{
+			{
+				Reader:      b,
+				Name:        "qrcode.png",
+				ContentType: "image/png",
+			},
+		},
+	})
+
+	if err != nil {
+		zap.S().Errorf("could not send message: %v", err)
+		return
+	}
 }

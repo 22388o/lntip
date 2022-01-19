@@ -16,6 +16,19 @@ func balanceHandler(s *discordgo.Session, m *discordgo.MessageCreate, args []str
 		zap.S().Error(err)
 	}
 
-	str := fmt.Sprintf("%s, you have %s sats (%f €).", m.Author.Mention(), humanize.Comma(user.Balance), (float32(user.Balance)/100000000.)*rates.Price)
-	s.ChannelMessageSend(m.ChannelID, str)
+	s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+		Title: "Your balance",
+		Color: 0xFFFF00,
+		Fields: []*discordgo.MessageEmbedField{
+			{
+				Name:  "Sats",
+				Value: humanize.Comma(user.Balance),
+			},
+			{
+				Name:  "Euro",
+				Value: fmt.Sprintf("%f €", (float32(user.Balance)/100000000.)*rates.Price),
+			},
+		},
+	})
+
 }

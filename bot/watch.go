@@ -6,6 +6,7 @@ import (
 
 	"github.com/aureleoules/lntip/lnclient"
 	"github.com/aureleoules/lntip/models"
+	"github.com/bwmarrin/discordgo"
 	"github.com/dustin/go-humanize"
 	"github.com/lightningnetwork/lnd/lnrpc"
 	"go.uber.org/zap"
@@ -47,7 +48,17 @@ func watchInvoices() {
 				continue
 			}
 
-			discord.ChannelMessageSend(channel.ID, fmt.Sprintf("Your deposit of %s sats has been received!", humanize.Comma(invoice.AmtPaidSat)))
+			discord.ChannelMessageSendEmbed(channel.ID, &discordgo.MessageEmbed{
+				Title: "Deposit received",
+				Color: 0xFFFF00,
+				Fields: []*discordgo.MessageEmbedField{
+					{
+						Name:  "Amount",
+						Value: humanize.Comma(invoice.AmtPaidSat) + " sats",
+					},
+				},
+			})
+
 			zap.S().Info("Invoice settled")
 		}
 	}

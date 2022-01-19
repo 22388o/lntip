@@ -15,31 +15,41 @@ import (
 const prefix = "!"
 
 type command struct {
-	name   string
-	f      func(s *discordgo.Session, m *discordgo.MessageCreate, args []string)
-	dmOnly bool
+	name        string
+	f           func(s *discordgo.Session, m *discordgo.MessageCreate, args []string)
+	dmOnly      bool
+	usage       string
+	description string
 }
 
 var discord *discordgo.Session
 var commands = []command{
 	{
-		name:   "deposit",
-		f:      depositHandler,
-		dmOnly: true,
+		name:        "deposit",
+		usage:       "!deposit <amount>",
+		f:           depositHandler,
+		dmOnly:      true,
+		description: "Deposit sats in your account.",
 	},
 	{
-		name: "lntip",
-		f:    lntipHandler,
+		name:        "lntip",
+		usage:       "!lntip <@user> <amount>",
+		f:           lntipHandler,
+		description: "Send a tip to a user.\nYou can also reward users by reacting with a **lntip<amount>** emoji on their messages.",
 	},
 	{
-		name:   "balance",
-		f:      balanceHandler,
-		dmOnly: true,
+		name:        "balance",
+		usage:       "!balance",
+		f:           balanceHandler,
+		dmOnly:      true,
+		description: "Check your balance.",
 	},
 	{
-		name:   "withdraw",
-		f:      withdrawHandler,
-		dmOnly: true,
+		name:        "withdraw",
+		usage:       "!withdraw <amount>",
+		f:           withdrawHandler,
+		dmOnly:      true,
+		description: "Withdraw sats to your wallet.",
 	},
 }
 
@@ -79,6 +89,11 @@ func Run() {
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
+		return
+	}
+
+	if strings.HasPrefix(m.Content, prefix+"help") {
+		helpHandler(s, m, nil)
 		return
 	}
 
