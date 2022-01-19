@@ -47,7 +47,7 @@ var commands = []command{
 	},
 	{
 		name:        "withdraw",
-		usage:       "!withdraw <amount>",
+		usage:       "!withdraw <invoice>",
 		f:           withdrawHandler,
 		dmOnly:      true,
 		description: "Withdraw sats to your wallet.",
