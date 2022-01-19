@@ -13,7 +13,7 @@ var Config ServerConfig
 // ServerConfig contains various configuration parameters
 type ServerConfig struct {
 	Bot struct {
-		Token string `env:"BOT_TOKEN"`
+		Token string `yaml:"token" env:"BOT_TOKEN"`
 	}
 	Database struct {
 		Name     string `yaml:"name" env:"DATABASE_NAME" env-default:"lnswap"`

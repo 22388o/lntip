@@ -23,6 +23,8 @@ type command struct {
 	description string
 }
 
+const withdrawFee = 10
+
 var discord *discordgo.Session
 var commands = []command{
 	{
@@ -50,7 +52,7 @@ var commands = []command{
 		usage:       "!withdraw <invoice>",
 		f:           withdrawHandler,
 		dmOnly:      true,
-		description: "Withdraw sats to your wallet.",
+		description: fmt.Sprintf("Withdraw sats to your wallet.\n**There is a fixed fee of %d sats per withdrawal.**", withdrawFee),
 	},
 }
 

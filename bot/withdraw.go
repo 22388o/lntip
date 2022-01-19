@@ -42,14 +42,14 @@ func withdrawHandler(s *discordgo.Session, m *discordgo.MessageCreate, args []st
 		return
 	}
 
-	if int64(invoice.MilliSat.ToSatoshis()) > user.Balance {
+	if int64(invoice.MilliSat.ToSatoshis())+int64(withdrawFee) > user.Balance {
 		s.ChannelMessageSend(m.ChannelID, "You don't have enough funds.")
 		return
 	}
 
 	s.ChannelMessageSend(m.ChannelID, "Withdrawing...")
 
-	err = models.UpdateUserBalance(m.Author.ID, user.Balance-int64(invoice.MilliSat.ToSatoshis()))
+	err = models.UpdateUserBalance(m.Author.ID, user.Balance-int64(invoice.MilliSat.ToSatoshis())-int64(withdrawFee))
 	if err != nil {
 		s.ChannelMessageSend(m.ChannelID, "Error: "+err.Error())
 		return
