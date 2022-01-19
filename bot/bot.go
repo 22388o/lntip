@@ -114,8 +114,9 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		space := regexp.MustCompile(`\s+`)
 		if strings.HasPrefix(m.Content, prefix+c.name) {
 			if c.dmOnly && channel.Type != discordgo.ChannelTypeDM {
+				zap.L().Debug("Command not allowed in this channel", zap.String("command", c.name), zap.String("channel", channel.Name))
 				s.ChannelMessageSend(m.ChannelID, "This command can only be used in DMs.")
-				return
+				break
 			}
 
 			c.f(s, m, strings.Split(space.ReplaceAllString(m.Content, " "), " ")[1:])
