@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/aureleoules/lntip/lnclient"
+	"github.com/aureleoules/lntip/models"
 	"github.com/bwmarrin/discordgo"
 	"github.com/dustin/go-humanize"
 	"github.com/lightningnetwork/lnd/lnrpc"
@@ -40,6 +41,12 @@ func depositHandler(s *discordgo.Session, m *discordgo.MessageCreate, args []str
 
 	if amount < 1 {
 		s.ChannelMessageSend(m.ChannelID, "Amount must be greater than 0.")
+		return
+	}
+
+	_, err = models.CreateUserIfNoExists(m.Author.ID)
+	if err != nil {
+		zap.S().Errorw("create user failed", "err", err)
 		return
 	}
 

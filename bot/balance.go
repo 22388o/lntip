@@ -11,9 +11,16 @@ import (
 )
 
 func balanceHandler(s *discordgo.Session, m *discordgo.MessageCreate, args []string) {
+	_, err := models.CreateUserIfNoExists(m.Author.ID)
+	if err != nil {
+		zap.L().Error("Error creating user", zap.Error(err))
+		return
+	}
+
 	user, err := models.GetUser(m.Author.ID)
 	if err != nil {
 		zap.S().Error(err)
+		return
 	}
 
 	s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{

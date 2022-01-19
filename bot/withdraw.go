@@ -31,6 +31,12 @@ func withdrawHandler(s *discordgo.Session, m *discordgo.MessageCreate, args []st
 		return
 	}
 
+	_, err = models.CreateUserIfNoExists(m.Author.ID)
+	if err != nil {
+		zap.S().Errorw("Error creating user", "error", err)
+		return
+	}
+
 	user, err := models.GetUser(m.Author.ID)
 	if err != nil {
 		return

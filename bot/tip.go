@@ -38,6 +38,12 @@ func reactionAdd(s *discordgo.Session, r *discordgo.MessageReactionAdd) {
 		return
 	}
 
+	_, err = models.CreateUserIfNoExists(r.UserID)
+	if err != nil {
+		zap.S().Errorw("Failed to create user", "error", err)
+		return
+	}
+
 	ok, err := models.HasTipped(r.UserID, r.MessageID, tipAmount)
 	if err != nil {
 		zap.S().Errorw("Failed to check if user has tipped", "error", err)
@@ -146,6 +152,12 @@ func lntipHandler(s *discordgo.Session, m *discordgo.MessageCreate, args []strin
 		return
 	}
 
+	_, err = models.CreateUserIfNoExists(m.Author.ID)
+	if err != nil {
+		zap.S().Errorw("Failed to create user", "error", err)
+		return
+	}
+
 	user, err := models.GetUser(m.Author.ID)
 	if err != nil {
 		zap.S().Errorw("Failed to get user", "error", err)
@@ -169,13 +181,7 @@ func lntipHandler(s *discordgo.Session, m *discordgo.MessageCreate, args []strin
 }
 
 func sendTip(s *discordgo.Session, tip *models.Tip, channelID string, fromUsername string) error {
-	_, err := models.CreateUserIfNoExists(tip.UserID)
-	if err != nil {
-		zap.S().Errorw("Failed to create user", "error", err)
-		return err
-	}
-
-	_, err = models.CreateUserIfNoExists(tip.ToUserID)
+	_, err := models.CreateUserIfNoExists(tip.ToUserID)
 	if err != nil {
 		zap.S().Errorw("Failed to create user", "error", err)
 		return err
