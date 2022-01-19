@@ -10,6 +10,7 @@ import (
 
 	"github.com/aureleoules/lntip/cfg"
 	"github.com/bwmarrin/discordgo"
+	"go.uber.org/zap"
 )
 
 const prefix = "!"
@@ -97,6 +98,12 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
+	channel, err := s.Channel(m.ChannelID)
+	if err != nil {
+		zap.L().Error("Error getting channel", zap.Error(err))
+		return
+	}
+
 	_, ok := usersMutex[m.Author.ID]
 	if !ok {
 		usersMutex[m.Author.ID] = &sync.Mutex{}
@@ -106,6 +113,11 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	for _, c := range commands {
 		space := regexp.MustCompile(`\s+`)
 		if strings.HasPrefix(m.Content, prefix+c.name) {
+			if c.dmOnly && channel.Type != discordgo.ChannelTypeDM {
+				s.ChannelMessageSend(m.ChannelID, "This command can only be used in DMs.")
+				return
+			}
+
 			c.f(s, m, strings.Split(space.ReplaceAllString(m.Content, " "), " ")[1:])
 			break
 		}
