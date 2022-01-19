@@ -79,11 +79,21 @@ lnd:
   network: mainnet
 ```
 
-You're good to go. Run:  
+Start the database and the bot:
 
 ```bash
 $ docker-compose up -d --build
 ```
+
+Initialize the database:
+```
+echo 'CREATE DATABASE lntip' | docker exec -it lntipdb mysql -uroot -pyour_pasword
+
+# Run SQL migrations
+docker run -v $PWD/migrations:/migrations --net=host migrate/migrate -path=/migrations/ -database "mysql://root:your_password@(localhost:3306)/lntip" up
+```
+
+🎉
 
 ## Author
 
