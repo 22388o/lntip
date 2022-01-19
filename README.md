@@ -15,17 +15,17 @@ Join this [Discord server](https://discord.gg/EjgmBe4HhU) to test it out!
 ### !lntip
 > Shows help message
 
-### !deposit <amount>
+### !deposit \<amount\>
 > Deposit sats in your account.
 
-### !tip <@user> <amount>
+### !tip \<@user\> \<amount\>
 > Send a tip to a user.  
-> You can also reward users by reacting with a lntip<amount> emoji on their messages.
+> You can also reward users by reacting with a lntip\<amount\> emoji on their messages.
 
 ### !balance
 > Check your balance.
 
-### !withdraw <invoice>
+### !withdraw \<invoice\>
 > Withdraw sats to your wallet.  
 > There is a fixed fee of 10 sats per withdrawal.
 
