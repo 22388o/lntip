@@ -32,8 +32,8 @@ var commands = []command{
 		description: "Deposit sats in your account.",
 	},
 	{
-		name:        "lntip",
-		usage:       "!lntip <@user> <amount>",
+		name:        "tip",
+		usage:       "!tip <@user> <amount>",
 		f:           lntipHandler,
 		description: "Send a tip to a user.\nYou can also reward users by reacting with a **lntip<amount>** emoji on their messages.",
 	},
@@ -92,7 +92,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if strings.HasPrefix(m.Content, prefix+"help") {
+	if strings.HasPrefix(m.Content, prefix+"lntip") {
 		helpHandler(s, m, nil)
 		return
 	}

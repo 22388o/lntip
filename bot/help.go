@@ -15,7 +15,7 @@ func helpHandler(s *discordgo.Session, m *discordgo.MessageCreate, args []string
 	}
 
 	fields = append(fields, &discordgo.MessageEmbedField{
-		Name:  prefix + "help",
+		Name:  prefix + "lntip",
 		Value: "Shows this message",
 	})
 
