@@ -123,7 +123,8 @@ func reactionAdd(s *discordgo.Session, r *discordgo.MessageReactionAdd) {
 		zap.S().Error(err)
 		return
 	}
-	zap.S().Info("Sending tip...")
+
+	zap.S().Infow("User %s tipped", "user", dUser.Username, r.UserID, "message", r.MessageID, "amount", tipAmount)
 
 	sendTip(s, &tip, r.ChannelID, dUser.Username)
 }
@@ -176,6 +177,8 @@ func lntipHandler(s *discordgo.Session, m *discordgo.MessageCreate, args []strin
 		ChannelID: m.ChannelID,
 		Amount:    int64(tipAmount),
 	}
+
+	zap.S().Infow("User %s tipped", "user", m.Author.Username, m.Author.ID, "message", m.Message.ID, "amount", tipAmount)
 
 	sendTip(s, &tip, m.ChannelID, m.Author.Username)
 }
