@@ -54,7 +54,8 @@ func Run() {
 
 	discord.AddHandler(messageCreate)
 	discord.AddHandler(reactionAdd)
-	discord.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuildMessages | discordgo.IntentsDirectMessages)
+
+	discord.Identify.Intents = discordgo.MakeIntent(discordgo.IntentsGuildMessages | discordgo.IntentsDirectMessages | discordgo.IntentsDirectMessageReactions | discordgo.IntentsGuildMessageReactions)
 
 	err = discord.Open()
 	if err != nil {

@@ -6,6 +6,7 @@ import (
 
 	"github.com/aureleoules/lntip/lnclient"
 	"github.com/aureleoules/lntip/models"
+	"github.com/dustin/go-humanize"
 	"github.com/lightningnetwork/lnd/lnrpc"
 	"go.uber.org/zap"
 )
@@ -46,7 +47,7 @@ func watchInvoices() {
 				continue
 			}
 
-			discord.ChannelMessageSend(channel.ID, fmt.Sprintf("Your deposit of %d sats has been received!", invoice.AmtPaidSat))
+			discord.ChannelMessageSend(channel.ID, fmt.Sprintf("Your deposit of %s sats has been received!", humanize.Comma(invoice.AmtPaidSat)))
 			zap.S().Info("Invoice settled")
 		}
 	}
