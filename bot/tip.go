@@ -15,6 +15,8 @@ import (
 
 const emojiPrefix = "lntip"
 
+const rewardLimit = 2000
+
 func reactionAdd(s *discordgo.Session, r *discordgo.MessageReactionAdd) {
 	if r.UserID == s.State.User.ID {
 		return
@@ -36,16 +38,39 @@ func reactionAdd(s *discordgo.Session, r *discordgo.MessageReactionAdd) {
 		return
 	}
 
+	ok, err := models.HasTipped(r.UserID, r.MessageID, tipAmount)
+	if err != nil {
+		zap.S().Errorw("Failed to check if user has tipped", "error", err)
+		return
+	}
+
+	if ok {
+		zap.S().Infow("User has already tipped", "user", r.UserID, "message", r.MessageID, "amount", tipAmount)
+		return
+	}
+
 	user, err := models.GetUser(r.UserID)
 	if err != nil {
 		zap.S().Errorw("Failed to get user", "error", err)
-		s.MessageReactionRemove(r.ChannelID, r.MessageID, r.Emoji.Name, r.UserID)
+		s.MessageReactionRemove(r.ChannelID, r.MessageID, r.Emoji.APIName(), r.UserID)
 		return
 	}
 
 	channel, err := discord.UserChannelCreate(r.UserID)
 	if err != nil {
 		zap.S().Error(err)
+		return
+	}
+	msg, err := discord.ChannelMessage(r.ChannelID, r.MessageID)
+	if err != nil {
+		zap.S().Errorw("Failed to get message", "error", err)
+		s.MessageReactionRemove(r.ChannelID, r.MessageID, r.Emoji.APIName(), r.UserID)
+		return
+	}
+
+	if msg.Author.ID == r.UserID {
+		zap.S().Infow("User is author of message", "user", r.UserID, "message", r.MessageID)
+		s.MessageReactionRemove(r.ChannelID, r.MessageID, r.Emoji.APIName(), r.UserID)
 		return
 	}
 
@@ -65,10 +90,14 @@ func reactionAdd(s *discordgo.Session, r *discordgo.MessageReactionAdd) {
 		return
 	}
 
-	msg, err := discord.ChannelMessage(r.ChannelID, r.MessageID)
-	if err != nil {
-		zap.S().Errorw("Failed to get message", "error", err)
-		s.MessageReactionRemove(r.ChannelID, r.MessageID, r.Emoji.ID, r.UserID)
+	if tipAmount > rewardLimit {
+		s.ChannelMessageSendEmbed(channel.ID, &discordgo.MessageEmbed{
+			Title: "Tip too large",
+			Description: fmt.Sprintf("You can't tip more than %s sats for now.",
+				humanize.Comma(int64(rewardLimit))),
+			Color: 0xFF0000,
+		})
+		s.MessageReactionRemove(r.ChannelID, r.MessageID, r.Emoji.APIName(), r.UserID)
 		return
 	}
 
@@ -84,7 +113,7 @@ func reactionAdd(s *discordgo.Session, r *discordgo.MessageReactionAdd) {
 
 	dUser, err := discord.User(r.UserID)
 	if err != nil {
-		s.MessageReactionRemove(r.ChannelID, r.MessageID, r.Emoji.ID, r.UserID)
+		s.MessageReactionRemove(r.ChannelID, r.MessageID, r.Emoji.APIName(), r.UserID)
 		zap.S().Error(err)
 		return
 	}

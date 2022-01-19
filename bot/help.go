@@ -21,7 +21,7 @@ func helpHandler(s *discordgo.Session, m *discordgo.MessageCreate, args []string
 
 	_, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 		Title:       "Help",
-		Description: "lntip is a bot that allows you to tip Discord users.\n\n[Here](https://www.walletofsatoshi.com/) is a good Lightning wallet for beginners if you need one.",
+		Description: "lntip is a bot that allows you to tip Discord users with Bitcoin through the Lightning Network.\n\n[Here](https://www.walletofsatoshi.com/) is a good Lightning wallet for beginners if you need one.",
 		Fields:      fields,
 		Type:        discordgo.EmbedTypeRich,
 		Color:       0xFFFF00,

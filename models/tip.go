@@ -39,3 +39,23 @@ func (t *Tip) create(tx *sqlx.Tx) error {
 	_, err = tx.Exec(q, args...)
 	return err
 }
+
+func HasTipped(userID, messageID string, amount int) (bool, error) {
+	q, args, err := builder.Select("count(*)").
+		From("tips").
+		Where("user_id = ? AND message_id = ? AND amount = ?", userID, messageID, amount).
+		Limit(1).
+		ToSql()
+
+	if err != nil {
+		return false, err
+	}
+
+	var count int
+	err = db.DB.Get(&count, q, args...)
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
+}
