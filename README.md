@@ -87,6 +87,7 @@ $ docker-compose up -d --build
 
 Initialize the database:
 ```
+# Create database
 echo 'CREATE DATABASE lntip' | docker exec -it lntipdb mysql -uroot -pyour_pasword
 
 # Run SQL migrations
