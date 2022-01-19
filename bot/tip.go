@@ -237,7 +237,13 @@ func sendTip(s *discordgo.Session, tip *models.Tip, channelID string, fromUserna
 		Color:       0xFFFF00,
 	})
 
-	discord.ChannelMessageSendEmbed(channelID, &discordgo.MessageEmbed{
+	channelFrom, err := discord.UserChannelCreate(tip.UserID)
+	if err != nil {
+		zap.S().Error(err)
+		return err
+	}
+
+	discord.ChannelMessageSendEmbed(channelFrom.ID, &discordgo.MessageEmbed{
 		Title:  "Successfully tipped",
 		Fields: fields,
 		Color:  0x00FF00,
